@@ -1,4 +1,6 @@
+import java.util.Objects;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Board {
 
@@ -8,6 +10,8 @@ public class Board {
     private String wall;
     private String playSpace;
     private String[][] Grid = new String[8][24];
+    private boolean win = false;
+    private int state = 0;
 
     Board(String wall, String playSpace){
 
@@ -57,8 +61,40 @@ public class Board {
 
     }
     public void updateBoard(){
-        //move player with input
+        Scanner sc = new Scanner(System.in);
+
+        //allow user input
+        System.out.println("Use W,A,S,D to move.");
+        System.out.print("Input: ");
+        String input = sc.nextLine();
+        input = input.toLowerCase();
+
+
+        //move player
+        Grid[plyr.getPosY()][plyr.getPosX()] = playSpace;
+
+        switch (input){
+            case "w" -> plyr.setPosY(plyr.getCurrentPosY(getGrid())-1);
+            case "a" -> plyr.setPosX(plyr.getCurrentPosX(getGrid())-1);
+            case "s" -> plyr.setPosY(plyr.getCurrentPosY(getGrid())+1);
+            case "d" -> plyr.setPosX(plyr.getCurrentPosX(getGrid())+1);
+        }
+
         //check for win/loss
+
+        if (isSpaceOpen(plyr.getPosX(), plyr.getPosY())) {
+            Grid[plyr.getPosY()][plyr.getPosX()] = plyr.getFace();
+            state = 0;
+        } else if (Objects.equals(Grid[plyr.getPosY()][plyr.getPosX()], "🕋")){
+            win = true;
+            System.out.println("YOU WIN!");
+            state = 1;
+        }   else {
+            win = true;
+            System.out.println("YOU LOSE!");
+            state = 2;
+        }
+
         //if win, update board/change level
         //if lose, end game
     }
@@ -132,6 +168,19 @@ public class Board {
         }
     }
 
+    public String[][] getGrid() {
+        return Grid;
+    }
 
+    public boolean isWin() {
+        return win;
+    }
 
+    public void setWin(boolean win) {
+        this.win = win;
+    }
+
+    public int getState() {
+        return state;
+    }
 }
